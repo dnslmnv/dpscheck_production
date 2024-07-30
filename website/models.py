@@ -10,4 +10,4 @@ class Marker(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def is_active(self):
-        return timezone.now() < self.created_at + timezone.timedelta(minutes=1)
+        return timezone.now() < self.created_at + timezone.timedelta(minutes=59)

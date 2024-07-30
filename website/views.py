@@ -21,7 +21,10 @@ def add_marker(request):
 def get_markers(request):
     active_markers = [marker for marker in Marker.objects.all() if marker.is_active()]
     Marker.objects.filter(id__in=[marker.id for marker in Marker.objects.all() if not marker.is_active()]).delete()
-    data = [{'lat': marker.latitude, 'lon': marker.longitude} for marker in active_markers]
+    data = {
+        'markers': [{'lat': marker.latitude, 'lon': marker.longitude} for marker in active_markers],
+        'active_markers_count': len(active_markers)
+    }
     return JsonResponse(data, safe=False)
 
 def index(request):
