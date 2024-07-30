@@ -9,6 +9,12 @@
     <script src="{% static 'bootstrap/js/bootstrap.min.js'%}"></script>
     <link rel="stylesheet" href="{% static 'css/style.css'%}">
     <title>ДПС.НЕТ</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        <script type="text/javascript">
+            Telegram.WebApp.ready();
+            var tg_user = Telegram.WebApp.initDataUnsafe.user;
+            window.location.href = "/telegram-auth/?tg_user=" + encodeURIComponent(JSON.stringify(tg_user));
+        </script>
 </head>
 <body>
     <header style="z-index: 1; position:fixed; width:100%;">
