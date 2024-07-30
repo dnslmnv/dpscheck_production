@@ -8,6 +8,21 @@ import json
 
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
+from django.http import JsonResponse
+from .models import Marker
+
+def add_marker(request):
+    latitude = request.GET.get('lat')
+    longitude = request.GET.get('lon')
+    if latitude and longitude:
+        Marker.objects.create(latitude=float(latitude), longitude=float(longitude))
+    return JsonResponse({'status': 'success'})
+
+def get_markers(request):
+    active_markers = [marker for marker in Marker.objects.all() if marker.is_active()]
+    Marker.objects.filter(id__in=[marker.id for marker in Marker.objects.all() if not marker.is_active()]).delete()
+    data = [{'lat': marker.latitude, 'lon': marker.longitude} for marker in active_markers]
+    return JsonResponse(data, safe=False)
 
 def index(request):
     return render(request, 'index.html')
