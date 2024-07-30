@@ -1,0 +1,39 @@
+.my-navbar {
+    background-color: black;
+    border-radius: 4px;
+}
+
+.my-anchor {
+    color: white;
+    text-decoration: none;
+}
+
+.pulsating-circle {
+    width: 20px;
+    height: 20px;
+    background-color: green;
+    border-radius: 50%;
+    position: relative;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 5px green, 0 0 10px green, 0 0 15px green;
+    }
+    50% {
+        box-shadow: 0 0 15px green, 0 0 30px green, 0 0 45px green;
+    }
+}
+
+.online {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.map {
+    position: absolute;
+    height: 100vh;
+}
