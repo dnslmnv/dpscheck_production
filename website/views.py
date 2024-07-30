@@ -11,6 +11,8 @@ bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
 def index(request):
     return render(request, 'index.html')
+def home(request):
+    return render(request, 'home.html')    
     
 def login(request): 
     return render(request, 'login.html')
