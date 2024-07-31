@@ -4,6 +4,9 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest
+from django.views.decorators.http import require_POST, require_http_methods
+from django.utils import timezone
 import json
 
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
@@ -22,10 +25,29 @@ def get_markers(request):
     active_markers = [marker for marker in Marker.objects.all() if marker.is_active()]
     Marker.objects.filter(id__in=[marker.id for marker in Marker.objects.all() if not marker.is_active()]).delete()
     data = {
-        'markers': [{'lat': marker.latitude, 'lon': marker.longitude} for marker in active_markers],
+        'markers': [{'lat': marker.latitude, 'lon': marker.longitude, 'id': marker.id, 'created_at': marker.created_at} for marker in active_markers],
         'active_markers_count': len(active_markers)
     }
     return JsonResponse(data, safe=False)
+
+@require_POST
+def extend_marker(request, id):
+    try:
+        marker = Marker.objects.get(pk=id)
+        marker.created_at = timezone.now()
+        marker.save()
+        return JsonResponse({'status': 'success'})
+    except Marker.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Marker not found'}, status=404)
+
+@require_http_methods(["DELETE"])
+def delete_marker(request, id):
+    try:
+        marker = Marker.objects.get(pk=id)
+        marker.delete()
+        return JsonResponse({'status': 'success'})
+    except Marker.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Marker not found'}, status=404)
 
 def index(request):
     return render(request, 'index.html')
@@ -54,5 +76,5 @@ def telegram_auth(request):
         if user:
             login(request, user)
 
-        return redirect('index')
+        return redirect('home')
     return redirect('login')
