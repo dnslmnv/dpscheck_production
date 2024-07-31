@@ -9,8 +9,8 @@
 }
 
 .pulsating-circle {
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
     background-color: green;
     border-radius: 50%;
     position: relative;
@@ -20,6 +20,7 @@
 @keyframes pulse {
     0%, 100% {
         box-shadow: 0 0 5px green, 0 0 10px green, 0 0 15px green;
+
     }
     50% {
         box-shadow: 0 0 15px green, 0 0 30px green, 0 0 45px green;
@@ -36,4 +37,138 @@
 .map {
     position: absolute;
     height: 100vh;
+}
+
+html, body, #map {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    display: flex;
+}
+
+.map {
+    flex: 1;
+}
+
+/* Стили для загрузочного экрана */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loading-bar {
+    width: 80%;
+    height: 20px;
+    background-color: white;
+    border-radius: 10px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.loading-bar div {
+    height: 100%;
+    width: 0;
+    background-color: #1E90FF;
+    border-radius: 10px;
+    animation: loading 3s infinite;
+}
+
+@keyframes loading {
+    0% { width: 0; }
+    50% { width: 100%; }
+    100% { width: 0; }
+}
+
+.btn-cont {
+    background-color: black;
+    border-radius: 16px;
+    width: 80%;
+    transition: background-color 0.3s ease;
+}
+
+.transparent {
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Устанавливаем прозрачность */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%; 
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-content {
+    background-color: #000000;
+    color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+    border-radius: 10px;
+}
+.modal-content button {
+    margin: 10px;
+}
+
+#confirmYes, #confirmNo {
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: black;
+}
+
+.ymaps-2-1-79-zoom {
+    display: none !important;
+}
+
+.ymaps-2-1-79-controls__control {
+    display: none !important;
+}
+
+.ymaps-2-1-79-copyrights-pane {
+    display: none !important;
+}
+
+.overlay-profile {
+    position: fixed;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    transition: left 0.5s ease;
+    z-index: 9999;
+}
+
+.overlay-profile.active {
+    left: 0;
+}
+
+.modal-backdrop {
+    z-index: 0 !important;
 }

@@ -36,14 +36,18 @@ function init() {
     });
 
     updateMarkers();
-    setInterval(updateMarkers, 60000); // Обновление каждые 30 секунд
+    setInterval(updateMarkers, 60000); // Обновление каждые 60 секунд
     // Скрытие загрузочного экрана после загрузки карты
     document.getElementById('loading-screen').style.display = 'none';
+
+    // Добавляем обработчики событий только один раз
+    document.getElementById('confirmYes').addEventListener('click', onConfirmYes);
+    document.getElementById('confirmNo').addEventListener('click', onConfirmNo);
 }
 
 function onMapClick(e) {
     clickCoords = e.get('coords');
-    addMarker(clickCoords[0], clickCoords[1]);
+    showConfirmationModal();
     myMap.events.remove('click', onMapClick);
 }
 
@@ -51,7 +55,27 @@ function addMarker(lat, lon) {
     fetch(`/add_marker/?lat=${lat}&lon=${lon}`)
         .then(() => {
             updateMarkers();
+            document.getElementById('container').classList.remove('transparent');
+            document.getElementById('container').style.backgroundColor = 'black';
         });
+}
+
+function showConfirmationModal() {
+    const modal = document.getElementById('confirmationModal');
+    modal.style.display = 'block';
+}
+
+function onConfirmYes() {
+    const modal = document.getElementById('confirmationModal');
+    modal.style.display = 'none';
+    addMarker(clickCoords[0], clickCoords[1]);
+}
+
+function onConfirmNo() {
+    const modal = document.getElementById('confirmationModal');
+    modal.style.display = 'none';
+    document.getElementById('container').classList.remove('transparent');
+    document.getElementById('container').style.backgroundColor = 'black';
 }
 
 function updateMarkers() {
