@@ -4,6 +4,9 @@
     <title>ДПС.НЕТ</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
         <script type="text/javascript">
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
             Telegram.WebApp.ready();
             var tg_user = Telegram.WebApp.initDataUnsafe.user;
             window.location.href = "/telegram-auth/?tg_user=" + encodeURIComponent(JSON.stringify(tg_user));
