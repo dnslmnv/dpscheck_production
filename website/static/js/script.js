@@ -95,7 +95,7 @@ function updateMarkers() {
                 });
 
                 placemark.events.add('click', function () {
-                    showMarkerModal(marker.id, marker.lat, marker.lon, marker.created_at);
+                    showMarkerModal(marker.id, marker.lat, marker.lon, marker.created_at, marker.username);
                 });
 
                 myMap.geoObjects.add(placemark);
@@ -105,10 +105,11 @@ function updateMarkers() {
         });
 }
 
-function showMarkerModal(id, lat, lon, createdAt) {
+function showMarkerModal(id, lat, lon, createdAt, username) {
     document.getElementById('markerLat').textContent = lat;
     document.getElementById('markerLon').textContent = lon;
     document.getElementById('markerCreatedAt').textContent = createdAt;
+    document.getElementById('markerUsername').textContent = username; // Set the username
     document.getElementById('extendMarkerBtn').onclick = () => extendMarker(id);
     document.getElementById('deleteMarkerBtn').onclick = () => deleteMarker(id);
     const markerModal = new bootstrap.Modal(document.getElementById('markerModal'));

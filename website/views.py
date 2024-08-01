@@ -17,15 +17,27 @@ from .models import Marker
 def add_marker(request):
     latitude = request.GET.get('lat')
     longitude = request.GET.get('lon')
-    if latitude and longitude:
-        Marker.objects.create(latitude=float(latitude), longitude=float(longitude))
+    Marker.objects.create(
+            latitude=float(latitude),
+            longitude=float(longitude),
+            user=request.user
+        )
     return JsonResponse({'status': 'success'})
 
 def get_markers(request):
     active_markers = [marker for marker in Marker.objects.all() if marker.is_active()]
     Marker.objects.filter(id__in=[marker.id for marker in Marker.objects.all() if not marker.is_active()]).delete()
     data = {
-        'markers': [{'lat': marker.latitude, 'lon': marker.longitude, 'id': marker.id, 'created_at': marker.created_at} for marker in active_markers],
+        'markers': [
+            {
+                'lat': marker.latitude,
+                'lon': marker.longitude,
+                'id': marker.id,
+                'created_at': marker.created_at,
+                'username': marker.user.first_name  # Add username to the response
+            }
+            for marker in active_markers
+        ],
         'active_markers_count': len(active_markers)
     }
     return JsonResponse(data, safe=False)
