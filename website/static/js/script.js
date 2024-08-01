@@ -4,8 +4,16 @@ let clickCoords;
 
 function init() {
     myMap = new ymaps.Map("map", {
-        center: [55.76, 37.64], // Москва
-        zoom: 17
+        center: [56.86125593217464,35.91491223044557], 
+        zoom: 13,
+        controls: ['geolocationControl']
+    }, {
+        // Зададим ограниченную область прямоугольником, 
+        // примерно описывающим Санкт-Петербург.
+        restrictMapArea: [
+            [56.7106070575507,35.481058444937915],
+            [57.00026552161211,36.30091318126605]
+        ]
     });
 
     document.getElementById('addMarkerBtn').addEventListener('click', () => {
@@ -19,7 +27,7 @@ function init() {
         // Создание круга вокруг текущего местоположения пользователя
         var userLocationCircle = new ymaps.Circle([
             userCoords, // Координаты центра круга
-            100 // Радиус круга в метрах
+            5 // Радиус круга в метрах
         ], {
             balloonContent: "Вы здесь"
         }, {

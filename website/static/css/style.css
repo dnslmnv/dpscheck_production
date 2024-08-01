@@ -172,3 +172,8 @@ main {
 .modal-backdrop {
     z-index: 0 !important;
 }
+
+.ymaps-2-1-79-float-button{
+    margin-top: 400px;
+
+}
