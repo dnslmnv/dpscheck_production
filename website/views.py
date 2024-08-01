@@ -80,11 +80,17 @@ def telegram_auth(request):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name)
-            user.set_unusable_password()
-            user.save()
+            # Реверсируем имя пользователя для использования в качестве пароля
+            reversed_password = username[::-1]
+            user = User.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                password=reversed_password  # Устанавливаем пароль как реверсированное имя пользователя
+            )
 
-        user = authenticate(username=username)
+        # Аутентификация и вход пользователя
+        user = authenticate(username=username, password=username[::-1])
         if user:
             login(request, user)
 
