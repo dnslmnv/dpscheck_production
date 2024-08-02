@@ -10,6 +10,7 @@ class Marker(models.Model):
     longitude = models.FloatField()
     created_at = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comments = models.TextField(blank=True, null=True)
     
     def is_active(self):
         return timezone.now() < self.created_at + timezone.timedelta(minutes=59)

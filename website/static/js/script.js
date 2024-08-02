@@ -59,8 +59,8 @@ function onMapClick(e) {
     myMap.events.remove('click', onMapClick);
 }
 
-function addMarker(lat, lon) {
-    fetch(`/add_marker/?lat=${lat}&lon=${lon}`)
+function addMarker(lat, lon, comment) {
+    fetch(`/add_marker/?lat=${lat}&lon=${lon}&comment=${encodeURIComponent(comment)}`)
         .then(() => {
             updateMarkers();
             document.getElementById('container').classList.remove('transparent');
@@ -76,7 +76,8 @@ function showConfirmationModal() {
 function onConfirmYes() {
     const modal = document.getElementById('confirmationModal');
     modal.style.display = 'none';
-    addMarker(clickCoords[0], clickCoords[1]);
+    const comment = document.getElementById('markerComment').value;
+    addMarker(clickCoords[0], clickCoords[1], comment);
 }
 
 function onConfirmNo() {
@@ -103,7 +104,7 @@ function updateMarkers() {
                 });
 
                 placemark.events.add('click', function () {
-                    showMarkerModal(marker.id, marker.lat, marker.lon, marker.created_at, marker.username);
+                    showMarkerModal(marker.id, marker.lat, marker.lon, marker.created_at, marker.username, marker.comment);
                 });
 
                 myMap.geoObjects.add(placemark);
@@ -113,11 +114,12 @@ function updateMarkers() {
         });
 }
 
-function showMarkerModal(id, lat, lon, createdAt, username) {
+function showMarkerModal(id, lat, lon, createdAt, username,comment) {
     document.getElementById('markerLat').textContent = lat;
     document.getElementById('markerLon').textContent = lon;
     document.getElementById('markerCreatedAt').textContent = createdAt;
     document.getElementById('markerUsername').textContent = username; // Set the username
+    document.getElementById('markerCommentDisplay').textContent = comment || 'Нет комментариев'; // Показать комментарий
     document.getElementById('extendMarkerBtn').onclick = () => extendMarker(id);
     document.getElementById('deleteMarkerBtn').onclick = () => deleteMarker(id);
     const markerModal = new bootstrap.Modal(document.getElementById('markerModal'));

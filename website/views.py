@@ -17,9 +17,11 @@ from .models import Marker
 def add_marker(request):
     latitude = request.GET.get('lat')
     longitude = request.GET.get('lon')
+    comment = request.GET.get('comment', '') 
     Marker.objects.create(
             latitude=float(latitude),
             longitude=float(longitude),
+            comments=str(comment),
             user=request.user
         )
     return JsonResponse({'status': 'success'})
@@ -34,7 +36,8 @@ def get_markers(request):
                 'lon': marker.longitude,
                 'id': marker.id,
                 'created_at': marker.created_at,
-                'username': marker.user.first_name  # Add username to the response
+                'username': marker.user.first_name,  # Add username to the response
+                'comment':marker.comments
             }
             for marker in active_markers
         ],

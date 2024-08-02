@@ -128,6 +128,7 @@
         <div id="confirmationModal" class="modal" style="display:none;">
             <div class="modal-content">
                 <p>Поставить маркер в это место?</p>
+                <textarea id="markerComment" placeholder="Добавьте комментарий" rows="3" style="width: 100%;"></textarea>
                 <button id="confirmYes">
                     <span class="fw-bold">Да</span>
                 </button>
@@ -164,11 +165,18 @@
                     <p><strong>Широта:</strong> <span id="markerLat"></span></p>
                     <p><strong>Долгота:</strong> <span id="markerLon"></span></p>
                     <p><strong>Время установки:</strong> <span id="markerCreatedAt"></span></p>
+                    <p><strong>Комментарий:</strong> <span id="markerCommentDisplay"></span></p>
                     <p><strong>Пользователь:</strong> <span id="markerUsername"></span></p> <!-- Add this line -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light text-dark" id="extendMarkerBtn">Продлить</button>
-                    <button type="button" class="btn btn-danger text-white" id="deleteMarkerBtn">Уехали</button>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-light text-dark" id="extendMarkerBtn">Продлить</button>
+                        </div>
+                        <div class="col-6 text-end">
+                            <button type="button" class="btn btn-danger text-white" id="deleteMarkerBtn">Уехали</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
