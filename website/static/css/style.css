@@ -177,3 +177,9 @@ main {
     margin-top: 400px;
 
 }
+
+#markerComment {
+    border-radius: 16px;
+    color: rgb(255, 255, 255); /* Цвет текста */
+    background-color: #000000;
+}

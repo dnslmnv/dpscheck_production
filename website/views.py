@@ -27,7 +27,9 @@ def add_marker(request):
     return JsonResponse({'status': 'success'})
 
 def get_markers(request):
+    # Получаем только активные метки
     active_markers = [marker for marker in Marker.objects.all() if marker.is_active()]
+    # Удаляем неактивные метки
     Marker.objects.filter(id__in=[marker.id for marker in Marker.objects.all() if not marker.is_active()]).delete()
     data = {
         'markers': [
@@ -36,8 +38,9 @@ def get_markers(request):
                 'lon': marker.longitude,
                 'id': marker.id,
                 'created_at': marker.created_at,
-                'username': marker.user.first_name,  # Add username to the response
-                'comment':marker.comments
+                'username': marker.user.first_name,
+                'comment': marker.comments,
+                'leave_count': marker.leave_count  # Добавлено поле leave_count
             }
             for marker in active_markers
         ],
@@ -55,12 +58,21 @@ def extend_marker(request, id):
     except Marker.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Marker not found'}, status=404)
 
-@require_http_methods(["DELETE"])
+@require_http_methods(["POST"])
 def delete_marker(request, id):
     try:
         marker = Marker.objects.get(pk=id)
-        marker.delete()
-        return JsonResponse({'status': 'success'})
+        if marker.is_active():
+            marker.leave_count += 1
+            if marker.leave_count >= 5:
+                marker.delete()
+                return JsonResponse({'status': 'success', 'deleted': True})
+            else:
+                marker.save()
+                return JsonResponse({'status': 'success', 'deleted': False, 'leave_count': marker.leave_count})
+        else:
+            marker.delete()  # Удаляем метку, если она неактивна (время истекло)
+            return JsonResponse({'status': 'success', 'deleted': True})
     except Marker.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Marker not found'}, status=404)
 

@@ -145,14 +145,24 @@ function extendMarker(id) {
 
 function deleteMarker(id) {
     fetch(`/delete_marker/${id}/`, {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
             'X-CSRFToken': document.querySelector('[name=csrf-token]').content
         }
     })
-    .then(() => {
-        updateMarkers();
-        // Получаем экземпляр модального окна и закрываем его
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            if (data.deleted) {
+                // Обновляем метки, если метка была удалена
+                updateMarkers();
+            } else {
+                // Обновляем leave_count для отображения пользователю
+                console.log(`Leave count for marker ${id}: ${data.leave_count}`);
+                // Можно добавить уведомление пользователю о том, сколько нажатий осталось
+                // alert(`Оставшихся нажатий для удаления: ${5 - data.leave_count}`);
+            }
+        }
         const markerModal = bootstrap.Modal.getInstance(document.getElementById('markerModal'));
         markerModal.hide();
     });
