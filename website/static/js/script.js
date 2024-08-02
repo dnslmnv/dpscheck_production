@@ -114,18 +114,20 @@ function updateMarkers() {
         });
 }
 
-function showMarkerModal(id, lat, lon, createdAt, username,comment) {
-    document.getElementById('markerLat').textContent = lat;
-    document.getElementById('markerLon').textContent = lon;
-    document.getElementById('markerCreatedAt').textContent = createdAt;
-    document.getElementById('markerUsername').textContent = username; // Set the username
+function showMarkerModal(id, lat, lon, createdAt, username, comment) {
+    // Преобразуем ISO дату в объект Date
+    const date = new Date(createdAt);
+    // Форматируем время в формат "часы:минуты"
+    const formattedTime = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+    document.getElementById('markerCreatedAt').textContent = formattedTime; // Устанавливаем отформатированное время
+    document.getElementById('markerUsername').textContent = username; // Устанавливаем имя пользователя
     document.getElementById('markerCommentDisplay').textContent = comment || 'Нет комментариев'; // Показать комментарий
     document.getElementById('extendMarkerBtn').onclick = () => extendMarker(id);
     document.getElementById('deleteMarkerBtn').onclick = () => deleteMarker(id);
     const markerModal = new bootstrap.Modal(document.getElementById('markerModal'));
     markerModal.show();
 }
-
 function extendMarker(id) {
     fetch(`/extend_marker/${id}/`, {
         method: 'POST',
@@ -133,9 +135,12 @@ function extendMarker(id) {
             'X-CSRFToken': document.querySelector('[name=csrf-token]').content
         }
     })
-        .then(() => {
-            updateMarkers();
-        });
+    .then(() => {
+        updateMarkers();
+        // Получаем экземпляр модального окна и закрываем его
+        const markerModal = bootstrap.Modal.getInstance(document.getElementById('markerModal'));
+        markerModal.hide();
+    });
 }
 
 function deleteMarker(id) {
@@ -145,7 +150,10 @@ function deleteMarker(id) {
             'X-CSRFToken': document.querySelector('[name=csrf-token]').content
         }
     })
-        .then(() => {
-            updateMarkers();
-        });
+    .then(() => {
+        updateMarkers();
+        // Получаем экземпляр модального окна и закрываем его
+        const markerModal = bootstrap.Modal.getInstance(document.getElementById('markerModal'));
+        markerModal.hide();
+    });
 }
