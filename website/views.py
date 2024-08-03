@@ -81,8 +81,6 @@ def index(request):
 def home(request):
     return render(request, 'home.html')    
     
-def login(request): 
-    return render(request, 'login.html')
 
 def telegram_auth(request):
     tg_user = request.GET.get('tg_user')
@@ -110,4 +108,4 @@ def telegram_auth(request):
             login(request, user)
 
         return redirect('home')
-    return redirect('login')
+    return redirect('index')
