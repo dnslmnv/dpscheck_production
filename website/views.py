@@ -12,7 +12,7 @@ import json
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
 from django.http import JsonResponse
-from .models import Marker,UserProfile
+from .models import Marker,UserProfile, LeaveAction
 
 def create_profiles_for_existing_users():
     users_without_profiles = User.objects.filter(userprofile__isnull=True)
@@ -24,14 +24,15 @@ create_profiles_for_existing_users()
 
 def marker_can_add(request):
     if not request.user.is_authenticated:
-            return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)\
+            return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)
             
     user_profile = request.user.userprofile
 
         # Проверяем, можно ли добавить метку
     if not user_profile.can_add_marker():
-        remaining_time = (user_profile.last_marker_time + timezone.timedelta(minutes=5)) - timezone.now()
+        remaining_time = (user_profile.last_marker_time + timezone.timedelta(seconds=300)) - timezone.now()
         minutes, seconds = divmod(remaining_time.total_seconds(), 60)
+        print(minutes, seconds)
         return JsonResponse({
                 'status': 'error',
                 'message': f'Подождите {int(minutes)} минут и {int(seconds)} секунд перед добавлением новой метки.'
@@ -112,8 +113,21 @@ def extend_marker(request, id):
 
 @require_http_methods(["POST"])
 def delete_marker(request, id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)
+
     try:
         marker = Marker.objects.get(pk=id)
+
+        # Проверяем, нажимал ли пользователь на кнопку "Уехали"
+        if LeaveAction.objects.filter(user=request.user, marker=marker).exists():
+            print('User already left marker')
+            return JsonResponse({'status': 'success', 'deleted': False, 'message': 'Вы уже отмечали метку как "Уехали"'})
+
+        # Добавляем запись о нажатии на кнопку "Уехали"
+        LeaveAction.objects.create(user=request.user, marker=marker)
+
+        # Обновляем счётчик и проверяем, нужно ли удалять метку
         if marker.is_active():
             marker.leave_count += 1
             if marker.leave_count >= 5:
@@ -126,8 +140,9 @@ def delete_marker(request, id):
             marker.delete()  # Удаляем метку, если она неактивна (время истекло)
             return JsonResponse({'status': 'success', 'deleted': True})
     except Marker.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Marker not found'}, status=404)
-
+        return JsonResponse({'status': 'error', 'message': 'Метка не найдена'}, status=404)
+    
+    
 def index(request):
     return render(request, 'index.html')
 def home(request):
