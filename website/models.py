@@ -13,3 +13,25 @@ class Marker(models.Model):
     def is_active(self):
         # Метка активна, если прошло меньше 59 минут и количество нажатий меньше 5
         return self.leave_count < 5 and timezone.now() < self.created_at + timezone.timedelta(minutes=59)
+    
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    last_marker_time = models.DateTimeField(null=True, blank=True)  # Время последней метки
+
+    def can_add_marker(self):
+        # Проверяем, прошло ли 7 минут с последнего добавления метки
+        if self.last_marker_time:
+            return timezone.now() >= self.last_marker_time + timezone.timedelta(minutes=7)
+        return True  # Разрешаем, если метки еще не ставились
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.userprofile.save()

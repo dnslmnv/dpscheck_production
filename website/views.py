@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest,HttpResponseForbidden
 from django.views.decorators.http import require_POST, require_http_methods
 from django.utils import timezone
 import json
@@ -12,19 +12,71 @@ import json
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
 from django.http import JsonResponse
-from .models import Marker
+from .models import Marker,UserProfile
 
+def create_profiles_for_existing_users():
+    users_without_profiles = User.objects.filter(userprofile__isnull=True)
+    for user in users_without_profiles:
+        UserProfile.objects.create(user=user)
+
+# Вызовите эту функцию один раз, например, в консоли Django
+create_profiles_for_existing_users()
+
+def marker_can_add(request):
+    if not request.user.is_authenticated:
+            return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)\
+            
+    user_profile = request.user.userprofile
+
+        # Проверяем, можно ли добавить метку
+    if not user_profile.can_add_marker():
+        remaining_time = (user_profile.last_marker_time + timezone.timedelta(minutes=5)) - timezone.now()
+        minutes, seconds = divmod(remaining_time.total_seconds(), 60)
+        return JsonResponse({
+                'status': 'error',
+                'message': f'Подождите {int(minutes)} минут и {int(seconds)} секунд перед добавлением новой метки.'
+            }, status=403)
+    return JsonResponse({
+                'status': 'success',
+                'message': f'ok'
+            }, status=200)
+     
 def add_marker(request):
-    latitude = request.GET.get('lat')
-    longitude = request.GET.get('lon')
-    comment = request.GET.get('comment', '') 
-    Marker.objects.create(
+    if request.method == "GET":
+        # Убедитесь, что пользователь аутентифицирован
+        if not request.user.is_authenticated:
+            return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)
+
+        # Получаем профиль пользователя
+        user_profile = request.user.userprofile
+
+        # Проверяем, можно ли добавить метку
+        if not user_profile.can_add_marker():
+            remaining_time = (user_profile.last_marker_time + timezone.timedelta(minutes=5)) - timezone.now()
+            minutes, seconds = divmod(remaining_time.total_seconds(), 60)
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Подождите {int(minutes)} минут и {int(seconds)} секунд перед добавлением новой метки.'
+            }, status=403)
+        
+        latitude = request.GET.get('lat')
+        longitude = request.GET.get('lon')
+        comment = request.GET.get('comment', '')
+
+        # Создаем новую метку
+        Marker.objects.create(
             latitude=float(latitude),
             longitude=float(longitude),
             comments=str(comment),
             user=request.user
         )
-    return JsonResponse({'status': 'success'})
+
+        # Обновляем время последней метки
+        user_profile.last_marker_time = timezone.now()
+        user_profile.save()
+
+        return JsonResponse({'status': 'success'})
+    return HttpResponseForbidden()
 
 def get_markers(request):
     # Получаем только активные метки
@@ -81,7 +133,6 @@ def index(request):
 def home(request):
     return render(request, 'home.html')    
     
-
 def telegram_auth(request):
     tg_user = request.GET.get('tg_user')
     if tg_user:

@@ -55,17 +55,39 @@ function init() {
 
 function onMapClick(e) {
     clickCoords = e.get('coords');
-    showConfirmationModal();
+    canAddMarker();
     myMap.events.remove('click', onMapClick);
 }
 
 function addMarker(lat, lon, comment) {
     fetch(`/add_marker/?lat=${lat}&lon=${lon}&comment=${encodeURIComponent(comment)}`)
-        .then(() => {
-            updateMarkers();
-            document.getElementById('container').classList.remove('transparent');
-            document.getElementById('container').style.backgroundColor = 'black';
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                updateMarkers();
+                document.getElementById('container').classList.remove('transparent');
+                document.getElementById('container').style.backgroundColor = 'black';
+            } else if (data.status === 'error') {
+                alert(data.message); // Показываем сообщение об ошибке, если метку нельзя добавить
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при добавлении метки:', error);
         });
+}
+function canAddMarker() {
+    fetch('/can_add_marker/')
+    .then(response => response.json())
+    .then(data =>{
+        if(data.status === 'error') {
+            alert(data.message);
+            document.getElementById('container').classList.remove('transparent');
+            document.getElementById('container').style.backgroundColor = 'black'
+        }
+        if(data.status === 'success') {
+            showConfirmationModal();
+        }
+    })
 }
 
 function showConfirmationModal() {
