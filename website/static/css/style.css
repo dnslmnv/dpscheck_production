@@ -183,3 +183,23 @@ main {
     color: rgb(255, 255, 255); /* Цвет текста */
     background-color: #000000;
 }
+
+#alert-div {
+    background-color: #0000009b;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+    position: absolute;
+    top: 40%;
+    height: auto;
+    min-height: 90px;
+    display: none;
+    z-index: 9990;
+    justify-content: center;
+    align-items: center;
+}
+
+#alert-span {
+    color: #ffffff;
+    z-index: 9991;
+}

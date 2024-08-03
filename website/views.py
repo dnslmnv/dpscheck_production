@@ -33,9 +33,16 @@ def marker_can_add(request):
         remaining_time = (user_profile.last_marker_time + timezone.timedelta(seconds=300)) - timezone.now()
         minutes, seconds = divmod(remaining_time.total_seconds(), 60)
         print(minutes, seconds)
+        minuts_str = ''
+        if minutes > 1:
+            minutes_str = 'минуты'
+        elif minutes == 1:
+            minutes_str = 'минута'
+        else:
+            minutes_str = 'минут'
         return JsonResponse({
                 'status': 'error',
-                'message': f'Подождите {int(minutes)} минут и {int(seconds)} секунд перед добавлением новой метки.'
+                'message': f'Подождите<br> {int(minutes)} {minutes_str} и {int(seconds)} секунд<br> перед добавлением новой метки.'
             }, status=403)
     return JsonResponse({
                 'status': 'success',

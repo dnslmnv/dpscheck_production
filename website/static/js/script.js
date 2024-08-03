@@ -1,7 +1,8 @@
 ymaps.ready(init);
 let myMap;
 let clickCoords;
-
+var alertDiv = document.getElementById('alert-div');
+var alertSpan = document.getElementById('alert-span');
 function init() {
     myMap = new ymaps.Map("map", {
         center: [56.86125593217464,35.91491223044557], 
@@ -68,7 +69,12 @@ function addMarker(lat, lon, comment) {
                 document.getElementById('container').classList.remove('transparent');
                 document.getElementById('container').style.backgroundColor = 'black';
             } else if (data.status === 'error') {
-                alert(data.message); // Показываем сообщение об ошибке, если метку нельзя добавить
+                alertDiv.style.display = 'flex';
+                alertDiv.innerHTML = `<span id="alert-span" class="fs-5 fw-bold text-center py-2">${data.message}</span>` // Показываем сообщение об ошибке, если метку нельзя добавить
+                function Hide() {
+                    alertDiv.style.display = 'none';
+                }
+                setTimeout(Hide, 5000);
             }
         })
         .catch(error => {
@@ -80,7 +86,12 @@ function canAddMarker() {
     .then(response => response.json())
     .then(data =>{
         if(data.status === 'error') {
-            alert(data.message);
+            alertDiv.style.display = 'flex';
+            alertDiv.innerHTML = `<span id="alert-span" class="fs-5 fw-bold text-center py-2">${data.message}</span>`
+            function Hide() {
+                alertDiv.style.display = 'none';
+            }
+            setTimeout(Hide, 5000);
             document.getElementById('container').classList.remove('transparent');
             document.getElementById('container').style.backgroundColor = 'black'
         }
@@ -180,7 +191,12 @@ function deleteMarker(id) {
             } 
             else{
                 if (data.message){
-                    alert(data.message);
+                    alertDiv.style.display = 'flex';
+                    alertDiv.innerHTML = `<span id="alert-span" class="fs-5 fw-bold text-center py-2">${data.message}</span>` // Показываем сообщение об ошибке, если метку нельзя добавить
+                    function Hide() {
+                        alertDiv.style.display = 'none';
+                    }
+                    setTimeout(Hide, 5000);
                 }
                     
             }
