@@ -125,7 +125,7 @@ function shareOnTelegram() {
     const appUrl = "https://t.me/DpsNet_bot/DPS_NET";
 
     // Текст сообщения, которое будет отправлено
-    const message = encodeURIComponent("Посмотри это мини-приложение: " + appUrl);
+    const message = encodeURIComponent("Посмотри это мини-приложение: ");
 
     // Ссылка для открытия Telegram
     const telegramUrl = `https://t.me/share/url?url=${appUrl}&text=${message}`;
