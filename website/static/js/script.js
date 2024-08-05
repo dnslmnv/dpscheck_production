@@ -230,7 +230,7 @@ function getProfile() {
             var username = document.getElementById('user-username');
             var active_markers_count = document.getElementById('active-markers');
             console.log(data.username);
-            username.innerHTML = `<span class="fs-4" style="color: white;">${data.username}</span>`
+            username.innerHTML = `<span class="fs-4" style="color: black;">${data.username}</span>`
             active_markers_count.innerHTML = `<span class="fs-4 ms-1"  style="color: white; text-shadow: 20px -12px 10px rgba(255, 255, 255, 0.4);">Активных меток: ${data.active_markers_count}</span><i class="fa-solid fa-map-pin fa-2x ms-2" style="color: #c80e0e;"></i>`
         }
     })
