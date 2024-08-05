@@ -182,7 +182,7 @@ def telegram_auth(request):
         tg_user_data = json.loads(tg_user)
         username = tg_user_data['username']
         first_name = tg_user_data['first_name']
-        last_name = tg_user_data['photo_url']
+        last_name = tg_user_data['last_name']
 
         try:
             user = User.objects.get(username=username)
