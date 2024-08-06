@@ -35,7 +35,7 @@ def user_profile(request):
     data = {
         'username': user.username,
         'first_name': user.first_name,
-        'photo_url': user.last_name,
+        'last_name': user.last_name,
         'active_markers_count': active_markers_count,
         'status': 'success',
     }
