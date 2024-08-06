@@ -180,7 +180,7 @@ def telegram_auth(request):
     tg_user = request.GET.get('tg_user')
     if tg_user:
         tg_user_data = json.loads(tg_user)
-        username = tg_user_data['username']
+        username = tg_user_data['id']
         first_name = tg_user_data['first_name']
         last_name = tg_user_data['last_name']
 
