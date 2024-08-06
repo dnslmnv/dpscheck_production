@@ -1,27 +1,30 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup,ReplyKeyboardMarkup, KeyboardButton
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes,CallbackContext,CallbackQueryHandler
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes, CallbackContext, CallbackQueryHandler
 
 TOKEN = '6947402319:AAEAx0tj9I0kYPm2sPuVafUUEMSKfbwERAc'
 OWNER_ID = '543664962'
 
-
 user_states = {}
 
-# Create a ReplyKeyboardMarkup with command buttons
+# Create a ReplyKeyboardMarkup with more descriptive button labels
 reply_keyboard = [
-    [KeyboardButton('/start'), KeyboardButton('/help')],
-    [KeyboardButton('/miniapp'), KeyboardButton('/feedback')]
+    [KeyboardButton('Обратная связь🤖'),KeyboardButton('Помощь🙏')],
+    [KeyboardButton('О Приложении'),]
 ]
 reply_markup = ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
-        [InlineKeyboardButton("Open Mini App", url="https://t.me/DpsNet_bot/DPS_NET")]
+        [InlineKeyboardButton("Открыть карту!", url="https://t.me/DpsNet_bot/DPS_NET")]
     ]
     inline_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        'Привет! Я ваш бот для Mini Apps.\n\nДоступные команды:',
+        'Привет! ДПС.НЕТ - не способствует развитию преступности!\n\nНо если вдруг у вас просрочилась страховка или случайно наклеелась тонировка - Welcome.\n\nПрисоединяйся к нашей команде:',
+        reply_markup=inline_markup
+    )
+    await update.message.reply_text(
+        'Мы не отслеживаем вашу геопозицию!\n\nЗапрос отправляется для того чтоб корректно отобразить карту и показать посты ДПС рядом с вами!',
         reply_markup=inline_markup
     )
     # Send the reply keyboard with commands
@@ -33,10 +36,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         'Доступные команды:\n'
-        '/start - Начать работу с ботом\n'
-        '/help - Получить помощь\n'
-        '/miniapp - Информация о Mini Apps\n'
-        '/feedback - Отправить отзыв владельцу бота',
+        'Start - Начать работу с ботом\n'
+        'Help - Получить помощь\n'
+        'Mini App - Информация о Mini Apps\n'
+        'Feedback - Отправить отзыв владельцу бота',
         reply_markup=reply_markup
     )
 
@@ -51,6 +54,7 @@ async def feedback_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 async def handle_message(update: Update, context: CallbackContext) -> None:
     user_id = update.message.from_user.id
+    text = update.message.text
     # Check if the user is in the feedback state
     if user_states.get(user_id) == 'awaiting_feedback':
         user_message = update.message.text
@@ -64,7 +68,15 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
         # Reset user state
         user_states[user_id] = None
     else:
-        await update.message.reply_text('Используйте команду /feedback чтобы отправить сообщение владельцу бота.', reply_markup=reply_markup)
+        # Map the descriptive text to command handlers
+        if text == 'Помощь🙏':
+            await help_command(update, context)
+        elif text == 'О Приложении':
+            await miniapp_command(update, context)
+        elif text == 'Обратная связь🤖':
+            await feedback_command(update, context)
+        else:
+            await update.message.reply_text('Используйте кнопки на клавиатуре, чтобы выбрать действие.', reply_markup=reply_markup)
 
 async def button_handler(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
