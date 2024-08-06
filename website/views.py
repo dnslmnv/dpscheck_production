@@ -19,8 +19,29 @@ def create_profiles_for_existing_users():
     for user in users_without_profiles:
         UserProfile.objects.create(user=user)
 
-# Вызовите эту функцию один раз, например, в консоли Django
 create_profiles_for_existing_users()
+
+def user_profile(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)
+
+    # Get the current user
+    user = request.user
+
+    # Count active markers placed by the user
+    active_markers_count = Marker.objects.filter(user=user).count()
+
+    # Prepare the data to be sent in the response
+    data = {
+        'username': user.username,
+        'first_name': user.first_name,
+        'photo_url': user.last_name,
+        'active_markers_count': active_markers_count,
+        'status': 'success',
+    }
+    print(data)
+    # Return the data as a JSON response
+    return JsonResponse(data, status=200)
 
 def marker_can_add(request):
     if not request.user.is_authenticated:
