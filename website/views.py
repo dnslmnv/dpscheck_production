@@ -14,12 +14,12 @@ bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 from django.http import JsonResponse
 from .models import Marker,UserProfile, LeaveAction
 
-def create_profiles_for_existing_users():
-    users_without_profiles = User.objects.filter(userprofile__isnull=True)
-    for user in users_without_profiles:
-        UserProfile.objects.create(user=user)
+#def create_profiles_for_existing_users():
+#    users_without_profiles = User.objects.filter(userprofile__isnull=True)
+#    for user in users_without_profiles:
+#        UserProfile.objects.create(user=user)
 
-create_profiles_for_existing_users()
+#create_profiles_for_existing_users()
 
 def user_profile(request):
     if not request.user.is_authenticated:
@@ -180,7 +180,7 @@ def telegram_auth(request):
     tg_user = request.GET.get('tg_user')
     if tg_user:
         tg_user_data = json.loads(tg_user)
-        username = tg_user_data['id']
+        username = str(tg_user_data['id'])
         first_name = tg_user_data['first_name']
         last_name = tg_user_data['last_name']
 
