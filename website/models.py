@@ -35,6 +35,7 @@ class UserProfile(models.Model):
     def can_add_marker(self):
         # Проверяем, прошло ли 7 минут с последнего добавления метки
         if self.last_marker_time:
+            if self.user.is_superuser: return True
             return timezone.now() >= self.last_marker_time + timezone.timedelta(seconds=300)
         return True  # Разрешаем, если метки еще не ставились
 

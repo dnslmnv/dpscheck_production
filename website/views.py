@@ -14,12 +14,12 @@ bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 from django.http import JsonResponse
 from .models import Marker,UserProfile, LeaveAction
 
-def create_profiles_for_existing_users():
-    users_without_profiles = User.objects.filter(userprofile__isnull=True)
-    for user in users_without_profiles:
-        UserProfile.objects.create(user=user)
+# def create_profiles_for_existing_users():
+#     users_without_profiles = User.objects.filter(userprofile__isnull=True)
+#     for user in users_without_profiles:
+#         UserProfile.objects.create(user=user)
 
-create_profiles_for_existing_users()
+# create_profiles_for_existing_users()
 
 def user_profile(request):
     if not request.user.is_authenticated:
@@ -148,12 +148,13 @@ def delete_marker(request, id):
         marker = Marker.objects.get(pk=id)
 
         # Проверяем, нажимал ли пользователь на кнопку "Уехали"
-        if LeaveAction.objects.filter(user=request.user, marker=marker).exists():
+        if not request.user.is_superuser and LeaveAction.objects.filter(user=request.user, marker=marker).exists():
             print('User already left marker')
             return JsonResponse({'status': 'success', 'deleted': False, 'message': 'Вы уже отмечали метку как "Уехали"'})
 
         # Добавляем запись о нажатии на кнопку "Уехали"
-        LeaveAction.objects.create(user=request.user, marker=marker)
+        if not request.user.is_superuser:
+            LeaveAction.objects.create(user=request.user, marker=marker)
 
         # Обновляем счётчик и проверяем, нужно ли удалять метку
         if marker.is_active():
@@ -180,7 +181,7 @@ def telegram_auth(request):
     tg_user = request.GET.get('tg_user')
     if tg_user:
         tg_user_data = json.loads(tg_user)
-        username = tg_user_data['id']
+        username = str(tg_user_data['id'])
         first_name = tg_user_data['first_name']
         last_name = tg_user_data['last_name']
 
