@@ -182,8 +182,8 @@ main {
     border-radius: 16px;
     color: rgb(255, 255, 255); /* Цвет текста */
     background-color: #000000;
-    box-sizing: border-box;
     padding: 10px;
+    box-sizing: border-box;
 }
 
 #alert-div {
@@ -228,13 +228,14 @@ main {
 }
 
 .ymaps-2-1-79-float-button-icon_icon_geolocation {
-    background-image: url(../media/icon/map.png) !important;
+    background-image: url(../media/icon/location-arrow-solid.svg) !important;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
     background-color: #000000 !important;
-    height: 100% !important; 
-    width: 100% !important;
+    height: 2.5rem !important; 
+    width: 2.5rem !important;
+    position:  relative !important;
 }
 
 .ymaps-2-1-79-inner-panes {
@@ -251,9 +252,10 @@ main {
     bottom: 2% !important;
     border-color: #000000 !important;
     background-color: #000 !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
     padding: 0 !important;
     width: 70px !important;
     height: 70px !important;
@@ -272,4 +274,24 @@ main {
 
 .ymaps-2-1-79-map ymaps {
     box-sizing:border-box !important;
+}
+
+#alert-cont {
+    display: none;
+    height: auto;
+    z-index: 9995;
+    background-color: #000000;
+    color: white;
+    transition: .3s ease-in-out;
+}
+
+.top-container{
+    background-color: white;
+    color: black;
+    
+}
+
+.top-heading{
+    text-align: center;
+
 }

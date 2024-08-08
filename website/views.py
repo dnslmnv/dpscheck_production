@@ -72,9 +72,11 @@ def marker_can_add(request):
      
 def add_marker(request):
     if request.method == "GET":
+        # Убедитесь, что пользователь аутентифицирован
         if not request.user.is_authenticated:
             return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)
 
+        # Получаем профиль пользователя
         user_profile = request.user.userprofile
 
         # Проверяем, можно ли добавить метку
@@ -100,6 +102,7 @@ def add_marker(request):
 
         # Обновляем время последней метки
         user_profile.last_marker_time = timezone.now()
+        user_profile.marker_count += 1 
         user_profile.save()
 
         return JsonResponse({'status': 'success'})
@@ -136,6 +139,8 @@ def extend_marker(request, id):
         return JsonResponse({'status': 'success'})
     except Marker.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Marker not found'}, status=404)
+
+
 
 @require_http_methods(["POST"])
 def delete_marker(request, id):
@@ -179,7 +184,15 @@ def delete_marker(request, id):
 def index(request):
     return render(request, 'index.html')
 def home(request):
-    return render(request, 'home.html')    
+    # Query the top 5 users with the most markers
+    top_users = UserProfile.objects.order_by('-marker_count')[:5]
+
+    # Pass the top users to the template context
+    context = {
+        'top_users': top_users
+    }
+
+    return render(request, 'home.html', context)
     
 def telegram_auth(request):
     tg_user = request.GET.get('tg_user')

@@ -85,6 +85,13 @@
                 </div>
             </div>
         </div>
+        <div class="container mt-5 py-2" id="alert-cont">
+            <div class="row justify-conent-center align-items-center">
+                <div class="col-12 text-center">
+                    <span class="text-center">Нажмите на место, куда вы хотите поставить метку</span>
+                </div>
+            </div>
+        </div>
     </header>
     <main>
         <div id="alert-div">
@@ -127,6 +134,20 @@
                 <div class="row mb-5" style="position: absolute; bottom: 0; left: 17%; width: 70vw;">
                     <div class="col-12 btn-col d-flex align-items-center justify-content-center" style="width:100%;">
                         <a href="#" onclick="shareOnTelegram()" class="btn btn-primary btn-lg" style="box-shadow: 20px -12px 20px 0px rgba(40, 9, 219, 0.4);">Поделиться ДПС.нет</a>
+                    </div>
+                </div>
+            </div>
+            <div class="container top-container">
+                <div class="row mt-3">
+                    <div class="col">
+                        <h1 class="top-heading mb-2 fs-1 fw-light mt-3 mb-2">Топ пользователей</h1>
+                        <ul>
+                            {% for profile in top_users %}
+                                <li style="list-style: none;" class="fs-5">
+                                    {{ forloop.counter }}.  {{ profile.user.username }} - {{ profile.marker_count }} <i class="fa-solid fa-map-pin fa-1x ms-1" style="color: #c80e0e;"></i>
+                                </li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -190,8 +211,12 @@
 
     <script src="{% static 'js/script.js'%}"></script>
     <script>
-        document.getElementById('container').addEventListener('click', function () {
-            this.classList.add('transparent');
+        document.addEventListener('DOMContentLoaded', function() {
+            const alertContainer = document.getElementById('alert-cont');
+            document.getElementById('container').addEventListener('click', function () {
+                this.classList.add('transparent');
+                alertContainer.style.display = 'block';
+            });
         });
     </script>
 

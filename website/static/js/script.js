@@ -104,6 +104,8 @@ function canAddMarker() {
 function showConfirmationModal() {
     const modal = document.getElementById('confirmationModal');
     modal.style.display = 'block';
+    const alertContainer = document.getElementById('alert-cont');
+    alertContainer.style.display = 'none';
 }
 
 function onConfirmYes() {

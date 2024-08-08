@@ -13,7 +13,7 @@ class Marker(models.Model):
     
     def is_active(self):
         # Метка активна, если прошло меньше 59 минут и количество нажатий меньше 5
-        return self.leave_count < 5 and timezone.now() < self.created_at + timezone.timedelta(minutes=180)
+        return self.leave_count < 5 and timezone.now() < self.created_at + timezone.timedelta(minutes=59)
     
 
 class LeaveAction(models.Model):
@@ -28,6 +28,7 @@ class LeaveAction(models.Model):
         
         
 class UserProfile(models.Model):
+    marker_count = models.IntegerField(default=0) 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     last_marker_time = models.DateTimeField(null=True, blank=True)  # Время последней метки
     def __str__(self):
