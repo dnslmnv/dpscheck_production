@@ -72,11 +72,9 @@ def marker_can_add(request):
      
 def add_marker(request):
     if request.method == "GET":
-        # Убедитесь, что пользователь аутентифицирован
         if not request.user.is_authenticated:
             return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)
 
-        # Получаем профиль пользователя
         user_profile = request.user.userprofile
 
         # Проверяем, можно ли добавить метку
@@ -144,17 +142,23 @@ def delete_marker(request, id):
     if not request.user.is_authenticated:
         return JsonResponse({'status': 'error', 'message': 'Вы не аутентифицированы'}, status=403)
 
+    if request.user.is_superuser:
+        try:
+            marker = Marker.objects.get(pk=id)
+            marker.delete()  # Superusers can delete immediately
+            return JsonResponse({'status': 'success', 'deleted': True})
+        except Marker.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Метка не найдена'}, status=404)
     try:
         marker = Marker.objects.get(pk=id)
 
         # Проверяем, нажимал ли пользователь на кнопку "Уехали"
-        if not request.user.is_superuser and LeaveAction.objects.filter(user=request.user, marker=marker).exists():
+        if LeaveAction.objects.filter(user=request.user, marker=marker).exists():
             print('User already left marker')
             return JsonResponse({'status': 'success', 'deleted': False, 'message': 'Вы уже отмечали метку как "Уехали"'})
 
         # Добавляем запись о нажатии на кнопку "Уехали"
-        if not request.user.is_superuser:
-            LeaveAction.objects.create(user=request.user, marker=marker)
+        LeaveAction.objects.create(user=request.user, marker=marker)
 
         # Обновляем счётчик и проверяем, нужно ли удалять метку
         if marker.is_active():
