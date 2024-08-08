@@ -124,7 +124,7 @@ function onConfirmNo() {
 
 function shareOnTelegram() {
     // URL мини-приложения, которое вы хотите поделиться
-    const appUrl = "https://t.me/DpsNet_bot/DPS_NET";
+    const appUrl = "https://t.me/DpsNet_bot";
 
     // Текст сообщения, которое будет отправлено
     const message = encodeURIComponent("Посмотри это мини-приложение: ");
