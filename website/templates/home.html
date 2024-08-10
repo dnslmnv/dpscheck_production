@@ -21,6 +21,30 @@
         tg.expand();
         tg.disableVerticalSwipes();
     </script>
+    <script>
+        function showConfirmationOnMeModal() {
+            const modal = document.getElementById('confirmationOnMeModal');
+            modal.style.display = 'block';
+        }
+
+        function onConfirmOnMeYes() {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var userCoords = [position.coords.latitude, position.coords.longitude];
+                const modal = document.getElementById('confirmationOnMeModal');
+                modal.style.display = 'none';
+                const comment = document.getElementById('markerComment').value;
+                addMarker(userCoords[0], userCoords[1], comment);
+
+            }, function (error) {
+                console.error("Ошибка при получении местоположения: ", error);
+            });
+        }
+
+        function onConfirmOnMeNo() {
+            const modal = document.getElementById('confirmationOnMeModal');
+            modal.style.display = 'none';
+        }
+    </script>
     <style>
         .modal-content.bg-dark {
             background-color: #343a40;
@@ -179,6 +203,25 @@
             </div>
         </div>
     </footer>
+    <div class="container mark-on-me-btn" onclick="showConfirmationOnMeModal()">
+        <div class="row">
+            <div class="col-12">
+                <img src="{% static "media/icon/mark-on-me.svg" %}" alt="markOnMe" style="object-fit: contain; height: 100%; width: 100%;">
+            </div>
+        </div>
+    </div>
+    <div id="confirmationOnMeModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <p>Поставить маркер на вашу геопозицию?</p>
+            <textarea id="markerOnMeComment" placeholder="   Добавьте комментарий" rows="3" style="width: 100%;"></textarea>
+            <button id="confirmOnMeYes" onclick="onConfirmOnMeYes()">
+                <span class="fw-bold">Да</span>
+            </button>
+            <button id="confirmOnMeNo" onclick="onConfirmOnMeNo()">
+                <span class="fw-bold">Нет</span>
+            </button>
+        </div>
+    </div>
     <!-- Модальное окно для отображения информации о маркере -->
     <div class="modal fade" id="markerModal" tabindex="-1" aria-labelledby="markerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">

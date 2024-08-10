@@ -124,7 +124,7 @@ function onConfirmNo() {
 
 function shareOnTelegram() {
     // URL мини-приложения, которое вы хотите поделиться
-    const appUrl = "https://t.me/DpsNet_bot";
+    const appUrl = "https://t.me/DpsNet_bot/DPS_NET";
 
     // Текст сообщения, которое будет отправлено
     const message = encodeURIComponent("Посмотри это мини-приложение: ");
@@ -242,4 +242,14 @@ function getProfile() {
             active_markers_count.innerHTML = `<span class="fs-4 ms-1"  style="color: white;">Активных меток: ${data.active_markers_count}</span><i class="fa-solid fa-map-pin fa-2x ms-2" style="color: #c80e0e;"></i>`
         }
     })
+}
+
+function putOnMyGeo() {
+    navigator.geolocation.getCurrentPosition(function (position) {
+        var userCoords = [position.coords.latitude, position.coords.longitude];
+        
+
+    }, function (error) {
+        console.error("Ошибка при получении местоположения: ", error);
+    });
 }

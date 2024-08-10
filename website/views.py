@@ -8,6 +8,7 @@ from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseBadReq
 from django.views.decorators.http import require_POST, require_http_methods
 from django.utils import timezone
 import json
+from cryptography.fernet import Fernet
 
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
@@ -221,3 +222,20 @@ def telegram_auth(request):
 
         return redirect('home')
     return redirect('index')
+
+key = Fernet.generate_key()
+print(key)
+key = b'AvbQDh6i2LIRU-Wym_QrsKjFo1vdB-qSvsqVEiA_g5w='
+cipher_suite = Fernet(key)
+
+@csrf_exempt
+def get_encrypted_user_ids(request):
+    # Retrieve all user IDs from UserProfile
+    # user_ids = list(UserProfile.objects.values_list('user_id', flat=True))
+    user_ids = [358216042]
+    # Convert the list to JSON string and encrypt it
+    user_ids_json = json.dumps(user_ids)
+    encrypted_data = cipher_suite.encrypt(user_ids_json.encode('utf-8'))
+
+    # Return as JSON response
+    return JsonResponse({'data': encrypted_data.decode('utf-8')})
