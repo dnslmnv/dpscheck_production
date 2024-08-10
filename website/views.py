@@ -223,16 +223,14 @@ def telegram_auth(request):
         return redirect('home')
     return redirect('index')
 
-key = Fernet.generate_key()
-print(key)
+
 key = b'AvbQDh6i2LIRU-Wym_QrsKjFo1vdB-qSvsqVEiA_g5w='
 cipher_suite = Fernet(key)
 
 @csrf_exempt
 def get_encrypted_user_ids(request):
     # Retrieve all user IDs from UserProfile
-    # user_ids = list(UserProfile.objects.values_list('user_id', flat=True))
-    user_ids = [358216042]
+    user_ids = list(UserProfile.objects.values_list('user_id', flat=True))
     # Convert the list to JSON string and encrypt it
     user_ids_json = json.dumps(user_ids)
     encrypted_data = cipher_suite.encrypt(user_ids_json.encode('utf-8'))
